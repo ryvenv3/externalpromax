@@ -43,7 +43,7 @@ struct InjectMenuView: View {
             name: "AIMDRAG",
             category: "AIMBOT",
             bundleID: "com.dts.freefireth",
-            targetPath: "Documents/contentcache/Compulsory/ios/gameassetbundles/avatar/assetindexer.PENojQAQf9a1l6Dzjs0n1Z3rtVU~3D",
+            targetPath: "Documents/contentcache/Compulsory/ios/gameassetbundles/avatar/",
             resourceFileName: "assetindexer.H5ak1JM1Eck~2FxRcJrEp~2FMzeuqmY~3D",
             resourceSubfolder: "patches/aimdrag"
         ),
@@ -60,10 +60,10 @@ struct InjectMenuView: View {
             name: "FPS 140",
             category: "EXTRA",
             bundleID: "com.dts.freefireth",
-            targetPath: "Library/Preferences/com.dts.freefireth.plist",
+            targetPath: "Library/Preferences/",
             resourceFileName: "com.dts.freefireth.plist",
             resourceSubfolder: "patches/fps 140",
-            launchAfterInject: true
+            launchAfterInject: false
         ),
     ]
 
@@ -142,11 +142,7 @@ struct InjectMenuView: View {
                                         ForEach(Array(consoleLogs.enumerated()), id: \.offset) { i, line in
                                             Text(line)
                                                 .font(.system(size: 11, design: .monospaced))
-                                                .foregroundStyle(
-                                                    line.contains("✅") ? Color.green :
-                                                    line.contains("❌") ? Color.red :
-                                                    Color(white: 0.6)
-                                                )
+                                                .foregroundStyle(Color(white: 0.6))
                                                 .id(i)
                                         }
                                     }
@@ -202,15 +198,15 @@ struct InjectMenuView: View {
         }()
 
         guard let resourceURL else {
-            results[button.id] = .failed("File not found in bundle")
-            log("❌ \(button.name) — file not found in bundle")
+        results[button.id] = .failed("File not found in bundle")
+            log("\(button.name) — file not found")
             return
         }
 
         working = button.id
         results[button.id] = .working
         progress[button.id] = 0
-        log("⚡ \(button.name) — starting inject...")
+        log("\(button.name) — starting inject...")
 
         let id = button.id
         let startTime = Date()
@@ -238,7 +234,7 @@ struct InjectMenuView: View {
                     results[button.id] = .success
                     progress[button.id] = 1.0
                     working = nil
-                    log("✅ \(button.name) — inject success")
+                    log("\(button.name) — done")
 
                     // Launch Free Fire jika launchAfterInject = true
                     if button.launchAfterInject {
@@ -267,7 +263,7 @@ struct InjectMenuView: View {
                 await MainActor.run {
                     results[button.id] = .failed(error.localizedDescription)
                     working = nil
-                    log("❌ \(button.name) — \(error.localizedDescription)")
+                    log("\(button.name) — failed")
                 }
             }
         }
@@ -352,13 +348,9 @@ private struct InjectButtonCard: View {
                                 .font(.system(size: 12, weight: .bold, design: .monospaced))
                                 .foregroundStyle(.red)
                         } else if isSuccess {
-                            Image(systemName: "checkmark.seal.fill")
+                            Image(systemName: "checkmark.circle.fill")
                                 .foregroundStyle(.green)
-                                .font(.system(size: 18))
-                        } else {
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 12, weight: .semibold))
-                                .foregroundStyle(Color(white: 0.3))
+                                .font(.system(size: 16))
                         }
                     }
                     .padding(.horizontal, 16)

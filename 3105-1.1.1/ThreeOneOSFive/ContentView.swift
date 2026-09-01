@@ -366,11 +366,11 @@ private struct DashboardView: View {
                 HStack {
                     Image(systemName: "calendar.badge.clock")
                         .foregroundStyle(state.daysRemaining <= 1 ? .red : .green)
-                    Text("Expires")
+                    Text("Expired")
                         .foregroundStyle(.secondary)
                     Spacer()
                     VStack(alignment: .trailing, spacing: 2) {
-                        Text(state.expiresAt, style: .date)
+                        Text(state.ExpiredAt, style: .date)
                             .font(.subheadline.monospacedDigit())
                             .foregroundStyle(.primary)
                         Text("\(state.daysRemaining) day\(state.daysRemaining == 1 ? "" : "s") remaining")

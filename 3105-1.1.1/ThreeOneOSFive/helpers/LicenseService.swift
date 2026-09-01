@@ -5,13 +5,13 @@ import UIKit
 
 struct LicenseValidateResponse: Codable {
     let valid: Bool
-    let expiresAt: String?
+    let ExpiredAt: String?
     let durationDays: Int?
     let error: String?
 
     enum CodingKeys: String, CodingKey {
         case valid
-        case expiresAt = "expires_at"
+        case ExpiredAt = "Expired_at"
         case durationDays = "duration_days"
         case error
     }
@@ -19,15 +19,15 @@ struct LicenseValidateResponse: Codable {
 
 struct LicenseState: Codable {
     let key: String
-    let expiresAt: Date
+    let ExpiredAt: Date
     let activatedAt: Date
 
     var isValid: Bool {
-        Date() < expiresAt
+        Date() < ExpiredAt
     }
 
     var daysRemaining: Int {
-        max(0, Calendar.current.dateComponents([.day], from: Date(), to: expiresAt).day ?? 0)
+        max(0, Calendar.current.dateComponents([.day], from: Date(), to: ExpiredAt).day ?? 0)
     }
 }
 
@@ -83,14 +83,14 @@ final class LicenseService: ObservableObject {
             let (data, _) = try await URLSession.shared.data(for: request)
             let response = try JSONDecoder().decode(LicenseValidateResponse.self, from: data)
 
-            if response.valid, let expiresAtStr = response.expiresAt {
+            if response.valid, let ExpiredAtStr = response.ExpiredAt {
                 let formatter = ISO8601DateFormatter()
                 formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-                let expiresAt = formatter.date(from: expiresAtStr)
-                    ?? ISO8601DateFormatter().date(from: expiresAtStr)
+                let ExpiredAt = formatter.date(from: ExpiredAtStr)
+                    ?? ISO8601DateFormatter().date(from: ExpiredAtStr)
                     ?? Date().addingTimeInterval(86400)
 
-                let state = LicenseState(key: cleanKey, expiresAt: expiresAt, activatedAt: Date())
+                let state = LicenseState(key: cleanKey, ExpiredAt: ExpiredAt, activatedAt: Date())
                 saveState(state)
                 await MainActor.run { self.licenseState = state; isChecking = false }
                 return true
