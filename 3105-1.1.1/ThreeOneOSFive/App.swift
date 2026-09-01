@@ -31,6 +31,7 @@ struct ThreeOneOSFiveApp: App {
     var body: some Scene {
         WindowGroup {
             ZStack {
+                LicenseGateView {
                 ContentView()
                     .environmentObject(appState)
                     .environmentObject(patchDraftCoordinator)
@@ -39,6 +40,7 @@ struct ThreeOneOSFiveApp: App {
                     .environment(\.locale, language.locale)
                     .opacity(showOnboarding ? 0 : 1)
                     .allowsHitTesting(!showOnboarding)
+                }
 
                 if showOnboarding {
                     OnboardingView {
