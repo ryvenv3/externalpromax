@@ -411,6 +411,5 @@ private struct InjectButtonCard: View {
             radius: 12, x: 0, y: 4
         )
     }
+}
 
-}
-}
