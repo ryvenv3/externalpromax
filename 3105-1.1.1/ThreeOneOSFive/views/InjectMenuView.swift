@@ -19,6 +19,15 @@ struct InjectMenuView: View {
     @State private var results: [UUID: InjectResult] = [:]
     @State private var working: UUID? = nil
     @State private var progress: [UUID: Double] = [:]
+    @State private var consoleLogs: [String] = []
+
+    private func log(_ msg: String) {
+        let ts = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .medium)
+        DispatchQueue.main.async {
+            consoleLogs.append("[\(ts)] \(msg)")
+            if consoleLogs.count > 40 { consoleLogs.removeFirst() }
+        }
+    }
 
     let buttons: [InjectButton] = [
         // AIMBOT
@@ -68,41 +77,98 @@ struct InjectMenuView: View {
         NavigationStack {
             ZStack {
                 Color.black.ignoresSafeArea()
-                ScrollView {
-                    VStack(spacing: 24) {
-                        ForEach(categories, id: \.self) { category in
-                            VStack(alignment: .leading, spacing: 10) {
-                                // Category header
-                                HStack {
-                                    Text(category)
-                                        .font(.system(size: 11, weight: .bold))
-                                        .foregroundStyle(.red.opacity(0.8))
-                                        .kerning(1.5)
-                                    Rectangle()
-                                        .fill(Color.red.opacity(0.2))
-                                        .frame(height: 1)
-                                }
-                                .padding(.horizontal, 16)
+                VStack(spacing: 0) {
+                    ScrollView {
+                        VStack(spacing: 24) {
+                            ForEach(categories, id: \.self) { category in
+                                VStack(alignment: .leading, spacing: 10) {
+                                    // Category header
+                                    HStack {
+                                        Text(category)
+                                            .font(.system(size: 11, weight: .bold))
+                                            .foregroundStyle(.red.opacity(0.8))
+                                            .kerning(1.5)
+                                        Rectangle()
+                                            .fill(Color.red.opacity(0.2))
+                                            .frame(height: 1)
+                                    }
+                                    .padding(.horizontal, 16)
 
-                                // Buttons in this category
-                                VStack(spacing: 10) {
-                                    ForEach(buttons.filter { $0.category == category }) { button in
-                                        InjectButtonCard(
-                                            button: button,
-                                            result: results[button.id],
-                                            isWorking: working == button.id,
-                                            progress: progress[button.id] ?? 0
-                                        ) {
-                                            inject(button)
+                                    // Buttons in this category
+                                    VStack(spacing: 10) {
+                                        ForEach(buttons.filter { $0.category == category }) { button in
+                                            InjectButtonCard(
+                                                button: button,
+                                                result: results[button.id],
+                                                isWorking: working == button.id,
+                                                progress: progress[button.id] ?? 0
+                                            ) {
+                                                inject(button)
+                                            }
+                                        }
+                                    }
+                                    .padding(.horizontal, 16)
+                                }
+                            }
+                        }
+                        .padding(.top, 20)
+                        .padding(.bottom, 12)
+                    }
+
+                    // Console terminal
+                    VStack(alignment: .leading, spacing: 0) {
+                        HStack {
+                            Circle().fill(Color.red).frame(width: 8, height: 8)
+                            Circle().fill(Color.yellow).frame(width: 8, height: 8)
+                            Circle().fill(Color.green).frame(width: 8, height: 8)
+                            Text("console")
+                                .font(.system(size: 10, weight: .medium, design: .monospaced))
+                                .foregroundStyle(Color(white: 0.4))
+                                .padding(.leading, 6)
+                            Spacer()
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(Color(white: 0.08))
+
+                        ScrollViewReader { proxy in
+                            ScrollView {
+                                VStack(alignment: .leading, spacing: 3) {
+                                    if consoleLogs.isEmpty {
+                                        Text("> waiting for action...")
+                                            .font(.system(size: 11, design: .monospaced))
+                                            .foregroundStyle(Color(white: 0.3))
+                                    } else {
+                                        ForEach(Array(consoleLogs.enumerated()), id: \.offset) { i, line in
+                                            Text(line)
+                                                .font(.system(size: 11, design: .monospaced))
+                                                .foregroundStyle(
+                                                    line.contains("✅") ? Color.green :
+                                                    line.contains("❌") ? Color.red :
+                                                    Color(white: 0.6)
+                                                )
+                                                .id(i)
                                         }
                                     }
                                 }
-                                .padding(.horizontal, 16)
+                                .padding(10)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .onChange(of: consoleLogs.count) { _ in
+                                if let last = consoleLogs.indices.last {
+                                    proxy.scrollTo(last, anchor: .bottom)
+                                }
                             }
                         }
+                        .frame(height: 110)
+                        .background(Color(white: 0.04))
                     }
-                    .padding(.top, 20)
-                    .padding(.bottom, 20)
+                    .overlay(
+                        Rectangle()
+                            .fill(Color.red.opacity(0.2))
+                            .frame(height: 1),
+                        alignment: .top
+                    )
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -119,7 +185,8 @@ struct InjectMenuView: View {
     }
 
     private func inject(_ button: InjectButton) {
-        guard working == nil else { return }
+        // Tiap button bisa jalan sendiri — cek hanya button ini yang sedang working
+        guard working != button.id else { return }
 
         // Cari file dari subfolder di bundle
         let resourceURL: URL? = {
@@ -136,12 +203,14 @@ struct InjectMenuView: View {
 
         guard let resourceURL else {
             results[button.id] = .failed("File not found in bundle")
+            log("❌ \(button.name) — file not found in bundle")
             return
         }
 
         working = button.id
         results[button.id] = .working
         progress[button.id] = 0
+        log("⚡ \(button.name) — starting inject...")
 
         let id = button.id
         let startTime = Date()
@@ -169,6 +238,7 @@ struct InjectMenuView: View {
                     results[button.id] = .success
                     progress[button.id] = 1.0
                     working = nil
+                    log("✅ \(button.name) — inject success")
 
                     // Launch Free Fire jika launchAfterInject = true
                     if button.launchAfterInject {
@@ -197,6 +267,7 @@ struct InjectMenuView: View {
                 await MainActor.run {
                     results[button.id] = .failed(error.localizedDescription)
                     working = nil
+                    log("❌ \(button.name) — \(error.localizedDescription)")
                 }
             }
         }
@@ -238,115 +309,108 @@ private struct InjectButtonCard: View {
     let progress: Double
     let onTap: () -> Void
 
+    @State private var pressed = false
+
+    var isSuccess: Bool {
+        if case .success = result { return true }
+        return false
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            // Top row
-            HStack(spacing: 12) {
-                ZStack {
-                    Circle()
-                        .fill(Color.red.opacity(0.1))
-                        .frame(width: 40, height: 40)
-                    Image(systemName: iconFor(button.name))
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundStyle(.red)
+        Button(action: onTap) {
+            ZStack {
+                // Background gradient
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: isSuccess
+                                ? [Color(white: 0.08), Color.green.opacity(0.08)]
+                                : [Color(white: 0.10), Color(white: 0.06)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+
+                // Red glow when working
+                if isWorking {
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(Color.red.opacity(0.04))
                 }
 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(button.name)
-                        .font(.system(size: 15, weight: .bold))
-                        .foregroundStyle(.white)
-                }
+                VStack(spacing: 0) {
+                    HStack(spacing: 14) {
+                        // Name
+                        Text(button.name)
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(.white)
 
-                Spacer()
+                        Spacer()
 
-                if let result {
-                    switch result {
-                    case .success:
-                        Text("✓")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(.green)
-                    case .failed, .working:
-                        EmptyView()
+                        // Status
+                        if isWorking {
+                            Text("\(Int(progress * 100))%")
+                                .font(.system(size: 12, weight: .bold, design: .monospaced))
+                                .foregroundStyle(.red)
+                        } else if isSuccess {
+                            Image(systemName: "checkmark.seal.fill")
+                                .foregroundStyle(.green)
+                                .font(.system(size: 18))
+                        } else {
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundStyle(Color(white: 0.3))
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+
+                    // Progress bar
+                    if isWorking {
+                        GeometryReader { geo in
+                            ZStack(alignment: .leading) {
+                                Rectangle()
+                                    .fill(Color(white: 0.08))
+                                    .frame(height: 3)
+                                Rectangle()
+                                    .fill(
+                                        LinearGradient(
+                                            colors: [Color.red.opacity(0.6), Color.red],
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    )
+                                    .frame(width: geo.size.width * progress, height: 3)
+                                    .animation(.linear(duration: 0.05), value: progress)
+                            }
+                        }
+                        .frame(height: 3)
                     }
                 }
             }
-            .padding(.horizontal, 14)
-            .padding(.top, 14)
-            .padding(.bottom, 10)
-
-            // Progress bar
-            if isWorking {
-                GeometryReader { geo in
-                    ZStack(alignment: .leading) {
-                        Rectangle().fill(Color(white: 0.1)).frame(height: 2)
-                        Rectangle().fill(Color.red)
-                            .frame(width: geo.size.width * progress, height: 2)
-                            .animation(.linear(duration: 0.05), value: progress)
-                    }
-                }
-                .frame(height: 2)
-
-                HStack(spacing: 5) {
-                    ProgressView().tint(.red).controlSize(.mini)
-                    Text("Applying \(Int(progress * 100))%")
-                        .font(.caption2)
-                        .foregroundStyle(Color(white: 0.45))
-                }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 6)
-            }
-
-            if case .failed(_) = result {
-                // error disembunyikan
-                EmptyView()
-            }
-
-            Divider().background(Color(white: 0.1))
-
-            // Apply button
-            Button(action: onTap) {
-                Group {
-                    if case .success = result {
-                        Text("Applied ✓")
-                            .foregroundStyle(.green)
-                    } else {
-                        Text(isWorking ? "Applying…" : "Apply")
-                            .foregroundStyle(isWorking ? Color(white: 0.35) : .white)
-                    }
-                }
-                .font(.system(size: 13, weight: .semibold))
-                .frame(maxWidth: .infinity)
-                .frame(height: 40)
-                .background(applyBg)
-                .clipShape(UnevenRoundedRectangle(
-                    topLeadingRadius: 0,
-                    bottomLeadingRadius: 14,
-                    bottomTrailingRadius: 14,
-                    topTrailingRadius: 0
-                ))
-            }
-            .disabled(isWorking)
         }
-        .background(Color(white: 0.07))
-        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .buttonStyle(.plain)
+        .disabled(isWorking)
+        .scaleEffect(pressed ? 0.97 : 1.0)
+        .animation(.spring(response: 0.2, dampingFraction: 0.7), value: pressed)
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in pressed = true }
+                .onEnded { _ in pressed = false }
+        )
         .overlay(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(isWorking ? Color.red.opacity(0.5) : Color(white: 0.11), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(
+                    isSuccess ? Color.green.opacity(0.3)
+                    : isWorking ? Color.red.opacity(0.4)
+                    : Color(white: 0.13),
+                    lineWidth: 1
+                )
+        )
+        .shadow(
+            color: isWorking ? Color.red.opacity(0.15) : Color.clear,
+            radius: 12, x: 0, y: 4
         )
     }
 
-    private var applyBg: Color {
-        if case .success = result { return Color.green.opacity(0.08) }
-        return isWorking ? Color(white: 0.06) : Color.red.opacity(0.8)
-    }
-
-    private func iconFor(_ name: String) -> String {
-        switch name.uppercased() {
-        case "AIMNECK": return "scope"
-        case "AIMDRAG": return "hand.draw"
-        case "AIMBODY": return "person.fill"
-        case "FPS 140": return "speedometer"
-        default: return "bolt.fill"
-        }
-    }
+}
 }
