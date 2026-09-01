@@ -163,7 +163,7 @@ struct ContentView: View {
                 tabSession: filesTabSession
             )
         case .patches:
-            PatchProjectsView()
+            InjectMenuView()
         case .cleaner:
             CleanerView()
         case .wallpapers:
