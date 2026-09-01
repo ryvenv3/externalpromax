@@ -280,34 +280,12 @@ private struct DashboardView: View {
                         Text("REGSXD EXTERNAL IOS")
                             .font(.system(size: 14, weight: .black))
                             .foregroundStyle(.red)
-                        Text("by Developer REGS XD")
+                        Text("by </> REGS XD")
                             .font(.system(size: 10, weight: .medium))
                             .foregroundStyle(.red.opacity(0.7))
                     }
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button { showLogs = true } label: {
-                        Image(systemName: "apple.terminal")
-                            .foregroundStyle(.red)
-                    }
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button { showSettings = true } label: {
-                        Image(systemName: "gearshape")
-                            .foregroundStyle(.red)
-                    }
-                }
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        showLogoutConfirm = true
-                    } label: {
-                        Image(systemName: "rectangle.portrait.and.arrow.right")
-                            .foregroundStyle(.red)
-                    }
-                }
             }
-            .sheet(isPresented: $showSettings) { SettingsView() }
-            .sheet(isPresented: $showLogs) { LogView() }
             .confirmationDialog("Logout?", isPresented: $showLogoutConfirm, titleVisibility: .visible) {
                 Button("Logout", role: .destructive) {
                     LicenseService.shared.logout()
