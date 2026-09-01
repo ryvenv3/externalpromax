@@ -97,7 +97,7 @@ struct ContentView: View {
                     )
                 }
             }
-            .navigationTitle("REGS XD EXPLORER")
+            .navigationTitle("REGSXD EXTERNAL")
             .navigationSplitViewColumnWidth(min: 210, ideal: 240, max: 300)
         } detail: {
             sectionContent(selectedVisibleSection)
@@ -280,23 +280,31 @@ private struct DashboardView: View {
             HStack(spacing: 14) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .fill(Color.red.opacity(0.15))
-                        .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Color.red, lineWidth: 1))
+                        .fill(Color(white: 0.1))
+                        .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Color.red.opacity(0.3), lineWidth: 1))
                         .frame(width: 48, height: 48)
-                    Text("RX")
-                        .font(.system(size: 18, weight: .black))
-                        .foregroundStyle(.red)
+                    if let icon = UIImage(named: "AppIcon60x60") ?? UIImage(named: "AppIcon") {
+                        Image(uiImage: icon)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 48, height: 48)
+                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    } else {
+                        Text("RX")
+                            .font(.system(size: 18, weight: .black))
+                            .foregroundStyle(.red)
+                    }
                 }
                 VStack(alignment: .leading, spacing: 2) {
                     Text("REGSXD EXTERNAL IOS")
-                        .font(.system(size: 15, weight: .black))
-                        .foregroundStyle(.red)
-                    Text("Developer: REGS XD")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundStyle(.secondary)
-                    Text("Version \(AppInfo.appVersion)")
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundStyle(.white)
+                    Text("</> REGS XD")
+                        .font(.system(size: 12, weight: .regular))
+                        .foregroundStyle(Color(white: 0.5))
+                    Text("v\(AppInfo.appVersion)")
                         .font(.system(size: 11))
-                        .foregroundStyle(.tertiary)
+                        .foregroundStyle(Color(white: 0.35))
                 }
                 Spacer()
             }
@@ -351,20 +359,20 @@ private struct DashboardView: View {
 
     private var deviceSection: some View {
         Section {
-            LabeledContent(language.text("dashboard.hardware_model")) {
+            LabeledContent("iPhone Model") {
                 Text(AppInfo.displayMachineName)
                     .font(.body.monospaced())
             }
             .listRowBackground(Color(white: 0.07))
-            LabeledContent(language.text("settings.ios_version")) {
+            LabeledContent("iOS Version") {
                 Text("\(AppInfo.osVersion) (\(AppInfo.osBuild))")
                     .font(.body.monospaced())
             }
             .listRowBackground(Color(white: 0.07))
             HStack {
-                Text(language.text("settings.compatibility"))
+                Text("Compatibility")
                 Spacer()
-                Text(language.text(appState.isSupported ? "settings.supported" : "settings.unsupported"))
+                Text(appState.isSupported ? "Supported" : "Unsupported")
                     .foregroundStyle(appState.isSupported ? Color.green : Color.red)
             }
             .listRowBackground(Color(white: 0.07))
@@ -388,10 +396,11 @@ private struct DashboardView: View {
                 .listRowBackground(Color(white: 0.07))
             }
         } header: {
-            Text(language.text("common.device"))
+            Text("DEVICE")
                 .foregroundStyle(.red.opacity(0.8))
         } footer: {
-            Text(language.text("settings.supported_range_summary"))
+            Text("Support iOS 15 – 27")
+                .foregroundStyle(Color(white: 0.4))
         }
     }
 }

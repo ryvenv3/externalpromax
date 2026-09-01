@@ -37,27 +37,36 @@ struct KeyEntryView: View {
                 VStack(spacing: 14) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 22, style: .continuous)
-                            .fill(Color.red.opacity(0.12))
+                            .fill(Color(white: 0.08))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 22, style: .continuous)
-                                    .stroke(Color.red, lineWidth: 1.5)
+                                    .stroke(Color.red.opacity(0.35), lineWidth: 1)
                             )
                             .frame(width: 90, height: 90)
-                        Text("RX")
-                            .font(.system(size: 36, weight: .black))
-                            .foregroundStyle(.red)
+                        if let icon = UIImage(named: "AppIcon60x60")
+                            ?? UIImage(named: "AppIcon") {
+                            Image(uiImage: icon)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 90, height: 90)
+                                .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+                        } else {
+                            Text("RX")
+                                .font(.system(size: 36, weight: .black))
+                                .foregroundStyle(.red)
+                        }
                     }
 
                     VStack(spacing: 4) {
                         Text("REGSXD EXTERNAL IOS")
                             .font(.system(size: 20, weight: .black))
-                            .foregroundStyle(.red)
-                        Text("Developer: REGS XD")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(.red.opacity(0.7))
+                            .foregroundStyle(.white)
+                        Text("</> REGS XD")
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundStyle(Color(white: 0.55))
                         Text("Enter your license key to continue")
                             .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Color(white: 0.4))
                             .padding(.top, 4)
                     }
                 }

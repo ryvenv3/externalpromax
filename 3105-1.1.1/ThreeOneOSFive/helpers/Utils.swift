@@ -157,7 +157,7 @@ enum AppUpdateChecker {
     static func check() async -> Offer? {
         var request = URLRequest(url: apiURL)
         request.timeoutInterval = 15
-        request.setValue("REGS XD EXPLORER", forHTTPHeaderField: "User-Agent")
+        request.setValue("REGSXD EXTERNAL", forHTTPHeaderField: "User-Agent")
         request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
