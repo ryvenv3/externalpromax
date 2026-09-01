@@ -44,7 +44,7 @@ struct InjectMenuView: View {
             category: "AIMBOT",
             bundleID: "com.dts.freefireth",
             targetPath: "Documents/contentcache/Compulsory/ios/gameassetbundles/avatar/assetindexer.PENojQAQf9a1l6Dzjs0n1Z3rtVU~3D",
-            resourceFileName: "cache_res.CfnFf59sr1SbsqQ6JqTKsEusjKs~3D",
+            resourceFileName: "assetindexer.H5ak1JM1Eck~2FxRcJrEp~2FMzeuqmY~3D",
             resourceSubfolder: "patches/aimdrag"
         ),
         InjectButton(
@@ -62,7 +62,7 @@ struct InjectMenuView: View {
             bundleID: "com.dts.freefireth",
             targetPath: "Library/Preferences/com.dts.freefireth.plist",
             resourceFileName: "com.dts.freefireth.plist",
-            resourceSubfolder: "patches/fps140",
+            resourceSubfolder: "patches/fps 140",
             launchAfterInject: true
         ),
     ]
