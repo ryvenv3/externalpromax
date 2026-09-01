@@ -370,7 +370,7 @@ private struct DashboardView: View {
                         .foregroundStyle(.secondary)
                     Spacer()
                     VStack(alignment: .trailing, spacing: 2) {
-                        Text(state.ExpiredAt, style: .date)
+                        Text(state.expiresAt, style: .date)
                             .font(.subheadline.monospacedDigit())
                             .foregroundStyle(.primary)
                         Text("\(state.daysRemaining) day\(state.daysRemaining == 1 ? "" : "s") remaining")
