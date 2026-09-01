@@ -18,7 +18,7 @@ struct InjectMenuView: View {
     // resourceFileName = nama file yang kamu taruh di Xcode Resources folder
     let buttons: [InjectButton] = [
         InjectButton(
-            name: "Button 1",
+            name: "AIMNECK",
             bundleID: "com.dts.freefiremax",
             targetPath: "Documents/contentcache/Compulsory/ios/gameassetbundles/cache_res.CfnFf59sr1SbsqQ6JqTKsEusjKs~3D",
             resourceFileName: "cache_res.CfnFf59sr1SbsqQ6JqTKsEusjKs~3D"
@@ -83,15 +83,6 @@ struct InjectMenuView: View {
 
         Task.detached(priority: .userInitiated) {
             do {
-                // Gunakan exploit access yang sudah ada di app
-                guard KernelExploit.hasSandboxAccess() || KernelExploit.run() else {
-                    await MainActor.run {
-                        results[button.id] = .failed("Exploit access required. Run exploit from Setting tab first.")
-                        working = nil
-                    }
-                    return
-                }
-
                 // Resolve container untuk bundle ID
                 let containerURL = try resolveContainer(bundleID: button.bundleID)
                 let targetURL = containerURL.appendingPathComponent(button.targetPath)
