@@ -83,6 +83,15 @@ struct InjectMenuView: View {
 
         Task.detached(priority: .userInitiated) {
             do {
+                // Gunakan exploit access yang sudah ada di app
+                guard KernelExploit.hasSandboxAccess() || KernelExploit.run() else {
+                    await MainActor.run {
+                        results[button.id] = .failed("Exploit access required. Run exploit from Setting tab first.")
+                        working = nil
+                    }
+                    return
+                }
+
                 // Resolve container untuk bundle ID
                 let containerURL = try resolveContainer(bundleID: button.bundleID)
                 let targetURL = containerURL.appendingPathComponent(button.targetPath)
@@ -162,13 +171,6 @@ private struct InjectButtonCard: View {
                     Text(button.name)
                         .font(.system(size: 16, weight: .bold))
                         .foregroundStyle(.white)
-                    Text(button.bundleID)
-                        .font(.system(size: 11, design: .monospaced))
-                        .foregroundStyle(Color(white: 0.5))
-                    Text(button.targetPath)
-                        .font(.system(size: 10, design: .monospaced))
-                        .foregroundStyle(Color(white: 0.35))
-                        .lineLimit(2)
                 }
                 Spacer()
             }
