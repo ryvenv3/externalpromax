@@ -1,9 +1,6 @@
 import SwiftUI
 
 // MARK: - LicenseGateView
-// Wrap your main ContentView with this to require a valid license key.
-// Usage in App.swift:
-//   LicenseGateView { ContentView() }
 
 struct LicenseGateView<Content: View>: View {
     @StateObject private var license = LicenseService.shared
@@ -14,15 +11,10 @@ struct LicenseGateView<Content: View>: View {
     }
 
     var body: some View {
-        Group {
-            if let state = license.licenseState, state.isValid {
-                content()
-                    .overlay(alignment: .bottom) {
-                        LicenseBadge(state: state)
-                    }
-            } else {
-                KeyEntryView()
-            }
+        if let state = license.licenseState, state.isValid {
+            content()
+        } else {
+            KeyEntryView()
         }
     }
 }
@@ -42,40 +34,48 @@ struct KeyEntryView: View {
                 Spacer()
 
                 // Logo
-                VStack(spacing: 12) {
+                VStack(spacing: 14) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        RoundedRectangle(cornerRadius: 22, style: .continuous)
                             .fill(Color.red.opacity(0.12))
                             .overlay(
-                                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                    .stroke(Color.red, lineWidth: 1)
+                                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                                    .stroke(Color.red, lineWidth: 1.5)
                             )
-                            .frame(width: 80, height: 80)
+                            .frame(width: 90, height: 90)
                         Text("RX")
-                            .font(.system(size: 32, weight: .black))
+                            .font(.system(size: 36, weight: .black))
                             .foregroundStyle(.red)
                     }
-                    Text("REGS XD EXPLORER")
-                        .font(.system(size: 22, weight: .bold))
-                        .foregroundStyle(.white)
-                    Text("Enter your license key to continue")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+
+                    VStack(spacing: 4) {
+                        Text("REGSXD EXTERNAL IOS")
+                            .font(.system(size: 20, weight: .black))
+                            .foregroundStyle(.red)
+                        Text("Developer: REGS XD")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(.red.opacity(0.7))
+                        Text("Enter your license key to continue")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .padding(.top, 4)
+                    }
                 }
-                .padding(.bottom, 44)
+                .padding(.bottom, 48)
 
                 // Key input card
                 VStack(spacing: 16) {
-                    TextField("REGS-XXXX-XXXX-XXXX", text: $keyInput)
-                        .font(.system(size: 16, weight: .medium, design: .monospaced))
+                    TextField("License", text: $keyInput)
+                        .font(.system(size: 16, weight: .semibold, design: .monospaced))
                         .multilineTextAlignment(.center)
                         .textInputAutocapitalization(.characters)
                         .autocorrectionDisabled()
+                        .foregroundStyle(.white)
                         .padding(14)
-                        .background(Color.white.opacity(0.05))
+                        .background(Color.red.opacity(0.06))
                         .overlay(
                             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                .stroke(Color.red.opacity(0.5), lineWidth: 1)
+                                .stroke(Color.red.opacity(0.6), lineWidth: 1)
                         )
                         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                         .offset(x: shaking ? -8 : 0)
@@ -97,14 +97,18 @@ struct KeyEntryView: View {
                                 ProgressView().tint(.white)
                             } else {
                                 Text("Activate Key")
-                                    .font(.system(size: 16, weight: .semibold))
+                                    .font(.system(size: 16, weight: .bold))
                                     .foregroundStyle(.white)
                             }
                         }
                         .frame(maxWidth: .infinity)
-                        .frame(height: 50)
-                        .background(keyInput.isEmpty ? Color.red.opacity(0.4) : Color.red)
-                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        .frame(height: 52)
+                        .background(
+                            keyInput.isEmpty
+                                ? Color.red.opacity(0.3)
+                                : Color.red
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                     }
                     .disabled(keyInput.isEmpty || license.isChecking)
                 }
@@ -114,8 +118,8 @@ struct KeyEntryView: View {
 
                 Text("Key is bound to this device on first activation")
                     .font(.caption2)
-                    .foregroundStyle(Color.white.opacity(0.25))
-                    .padding(.bottom, 32)
+                    .foregroundStyle(Color.white.opacity(0.2))
+                    .padding(.bottom, 36)
             }
         }
     }
@@ -132,36 +136,5 @@ struct KeyEntryView: View {
                 }
             }
         }
-    }
-}
-
-// MARK: - LicenseBadge (small indicator inside app)
-
-struct LicenseBadge: View {
-    let state: LicenseState
-
-    @State private var showDetail = false
-
-    var body: some View {
-        Button {
-            showDetail.toggle()
-        } label: {
-            HStack(spacing: 6) {
-                Circle()
-                    .fill(state.daysRemaining <= 1 ? Color.red : Color.green)
-                    .frame(width: 6, height: 6)
-                Text(showDetail
-                     ? "\(state.daysRemaining)d left · \(state.key)"
-                     : "\(state.daysRemaining)d left")
-                    .font(.system(size: 11, weight: .medium, design: .monospaced))
-                    .foregroundStyle(.secondary)
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(.ultraThinMaterial)
-            .clipShape(Capsule())
-        }
-        .buttonStyle(.plain)
-        .padding(.bottom, 8)
     }
 }

@@ -52,6 +52,11 @@ enum AppInfo {
         let v = ProcessInfo.processInfo.operatingSystemVersion
         return "\(v.majorVersion).\(v.minorVersion).\(v.patchVersion)"
     }
+    static var appVersion: String {
+        Bundle.main.object(forInfoDictionaryKey: "AppReleaseDisplayVersion") as? String
+            ?? Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+            ?? "1.0"
+    }
     static var versionTuple: (major: Int, minor: Int, patch: Int) {
         let v = ProcessInfo.processInfo.operatingSystemVersion
         return (v.majorVersion, v.minorVersion, v.patchVersion)
