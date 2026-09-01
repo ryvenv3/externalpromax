@@ -69,7 +69,7 @@ struct PatchProjectEditorView: View {
                     }
                 }
 
-                if existingProject != nil || !rules.isEmpty || !directories.isEmpty {
+                if true {
                     Section {
                     ForEach(rules) { rule in
                         Button {
@@ -89,13 +89,11 @@ struct PatchProjectEditorView: View {
                     }
                     .onDelete { rules.remove(atOffsets: $0) }
 
-                        if existingProject != nil {
-                            Button {
+                        Button {
                                 ruleEditor = PatchRuleEditorContext(rule: nil)
                             } label: {
                                 Label(language.text("patch.add_rule"), systemImage: "plus.circle.fill")
                             }
-                        }
                         if !directories.isEmpty {
                             LabeledContent(language.text("patch.folders")) {
                                 Text("\(directories.count)")

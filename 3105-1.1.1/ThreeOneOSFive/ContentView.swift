@@ -217,7 +217,6 @@ private struct DashboardView: View {
         NavigationStack {
             List {
                 deviceSection
-                featuresSection
             }
             .navigationBarTitleDisplayMode(.inline)
             .tint(AppTheme.accent)
@@ -237,23 +236,6 @@ private struct DashboardView: View {
             }
             .sheet(isPresented: $showSettings) { SettingsView() }
             .sheet(isPresented: $showLogs) { LogView() }
-        }
-    }
-
-    private var featuresSection: some View {
-        Section {
-            Toggle(isOn: $cleanerEnabled) {
-                Label(language.text("tab.cleaner"), systemImage: "sparkles")
-            }
-            if wallpapersSupported {
-                Toggle(isOn: $wallpapersEnabled) {
-                    Label(language.text("tab.wallpapers"), systemImage: "photo.on.rectangle.angled")
-                }
-            }
-        } header: {
-            Text(language.text("dashboard.features"))
-        } footer: {
-            Text(language.text("dashboard.features_footer"))
         }
     }
 
