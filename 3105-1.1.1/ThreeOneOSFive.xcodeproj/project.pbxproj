@@ -65,6 +65,7 @@
 		3105X100 /* LicenseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105X001; };
 		3105X101 /* LicenseGateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105X002; };
 		3105X104 /* cache_res.CfnFf59sr1SbsqQ6JqTKsEusjKs~3D in Resources */ = {isa = PBXBuildFile; fileRef = 3105X004; };
+		3105X102 /* InjectMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105X003; };
 		3105I200 /* FilesTabControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105I100; };
 		3105I201 /* FilesTabSwitcherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105I101; };
 		3105A233 /* ContainerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105A104; };
