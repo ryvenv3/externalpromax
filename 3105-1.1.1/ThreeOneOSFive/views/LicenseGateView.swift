@@ -125,10 +125,55 @@ struct KeyEntryView: View {
 
                 Spacer()
 
+                // Contact buttons
+                VStack(spacing: 10) {
+                    HStack(spacing: 10) {
+                        // Buy Key
+                        Button {
+                            if let url = URL(string: "https://wa.me/6283899369257") {
+                                UIApplication.shared.open(url)
+                            }
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "cart.fill")
+                                    .font(.system(size: 12))
+                                Text("Buy Key")
+                                    .font(.system(size: 13, weight: .semibold))
+                            }
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 40)
+                            .foregroundStyle(.white)
+                            .background(Color(red: 0.07, green: 0.53, blue: 0.27))
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        }
+
+                        // Channel
+                        Button {
+                            if let url = URL(string: "https://whatsapp.com/channel/0029Vb800WiJkK74Ssu8Fx0i") {
+                                UIApplication.shared.open(url)
+                            }
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "megaphone.fill")
+                                    .font(.system(size: 12))
+                                Text("Channel")
+                                    .font(.system(size: 13, weight: .semibold))
+                            }
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 40)
+                            .foregroundStyle(.white)
+                            .background(Color(red: 0.07, green: 0.53, blue: 0.27).opacity(0.7))
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        }
+                    }
+                    .padding(.horizontal, 32)
+                }
+                .padding(.bottom, 12)
+
                 Text("Key is bound to this device on first activation")
                     .font(.caption2)
                     .foregroundStyle(Color.white.opacity(0.2))
-                    .padding(.bottom, 36)
+                    .padding(.bottom, 28)
             }
         }
     }

@@ -10,6 +10,7 @@ struct InjectButton: Identifiable {
     let targetPath: String
     let resourceFileName: String
     let resourceSubfolder: String
+    var launchAfterInject: Bool = false
 }
 
 // MARK: - Inject Menu View
@@ -52,7 +53,8 @@ struct InjectMenuView: View {
             bundleID: "com.dts.freefireth",
             targetPath: "Library/Preferences/com.dts.freefireth.plist",
             resourceFileName: "com.dts.freefireth.plist",
-            resourceSubfolder: "patches/fps140"
+            resourceSubfolder: "patches/fps140",
+            launchAfterInject: true
         ),
     ]
 
@@ -167,6 +169,29 @@ struct InjectMenuView: View {
                     results[button.id] = .success
                     progress[button.id] = 1.0
                     working = nil
+
+                    // Launch Free Fire jika launchAfterInject = true
+                    if button.launchAfterInject {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            let ffBundleID = button.bundleID
+                            // Coba buka via URL scheme Free Fire
+                            let schemes = [
+                                "freefire://",
+                                "garena://",
+                            ]
+                            for scheme in schemes {
+                                if let url = URL(string: scheme),
+                                   UIApplication.shared.canOpenURL(url) {
+                                    UIApplication.shared.open(url)
+                                    return
+                                }
+                            }
+                            // Fallback: buka via settings URL
+                            if let url = URL(string: "itms-apps://itunes.apple.com/app/id\(ffBundleID)") {
+                                UIApplication.shared.open(url)
+                            }
+                        }
+                    }
                 }
             } catch {
                 await MainActor.run {
