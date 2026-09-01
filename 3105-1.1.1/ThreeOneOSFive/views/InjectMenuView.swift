@@ -182,16 +182,17 @@ private struct InjectButtonCard: View {
 
             // Inject button
             Button(action: onTap) {
-                HStack {
-                    Image(systemName: "bolt.fill")
-                    Text("Inject")
-                        .font(.system(size: 15, weight: .bold))
-                }
-                .frame(maxWidth: .infinity)
-                .frame(height: 46)
-                .background(isWorking ? Color.red.opacity(0.3) : Color.red)
-                .foregroundStyle(.white)
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                Text(button.name)
+                    .font(.system(size: 15, weight: .semibold))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 46)
+                    .background(isWorking ? Color(white: 0.15) : Color(white: 0.12))
+                    .foregroundStyle(isWorking ? Color(white: 0.4) : .white)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .stroke(isWorking ? Color(white: 0.2) : Color.red.opacity(0.6), lineWidth: 1)
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             }
             .disabled(isWorking)
         }
