@@ -240,10 +240,7 @@ private struct InjectButtonCard: View {
                         Text("✓")
                             .font(.system(size: 14, weight: .bold))
                             .foregroundStyle(.green)
-                    case .failed:
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundStyle(.red.opacity(0.8))
-                    case .working:
+                    case .failed, .working:
                         EmptyView()
                     }
                 }
@@ -274,13 +271,9 @@ private struct InjectButtonCard: View {
                 .padding(.vertical, 6)
             }
 
-            if case .failed(let msg) = result {
-                Text(msg)
-                    .font(.caption2)
-                    .foregroundStyle(.red.opacity(0.7))
-                    .padding(.horizontal, 14)
-                    .padding(.bottom, 8)
-                    .lineLimit(2)
+            if case .failed(_) = result {
+                // error disembunyikan
+                EmptyView()
             }
 
             Divider().background(Color(white: 0.1))
