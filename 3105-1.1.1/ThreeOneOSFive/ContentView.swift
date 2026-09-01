@@ -58,18 +58,61 @@ struct ContentView: View {
     }
 
     private var compactLayout: some View {
-        TabView(selection: tabSelection) {
-            ForEach(featureVisibility.visibleSections) { section in
-                sectionContent(section)
-                    .tabItem {
-                        CompactTabLabel(
-                            title: language.text(section.titleKey),
-                            systemImage: section.systemImage
-                        )
-                    }
-                    .tag(section.rawValue)
+        ZStack(alignment: .bottom) {
+            // Content
+            ZStack {
+                ForEach(featureVisibility.visibleSections) { section in
+                    sectionContent(section)
+                        .opacity(tabNavigation.selectedTab == section.rawValue ? 1 : 0)
+                        .allowsHitTesting(tabNavigation.selectedTab == section.rawValue)
+                }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(.bottom, 70)
+
+            // Custom tab bar
+            HStack(spacing: 0) {
+                ForEach(featureVisibility.visibleSections) { section in
+                    let isSelected = tabNavigation.selectedTab == section.rawValue
+                    Button {
+                        tabNavigation.select(section.rawValue)
+                    } label: {
+                        VStack(spacing: 4) {
+                            Image(systemName: section.systemImage)
+                                .font(.system(size: 20, weight: isSelected ? .bold : .regular))
+                                .foregroundStyle(isSelected ? Color.red : Color(white: 0.45))
+                                .scaleEffect(isSelected ? 1.1 : 1.0)
+                                .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
+                            Text(language.text(section.titleKey))
+                                .font(.system(size: 10, weight: isSelected ? .semibold : .regular))
+                                .foregroundStyle(isSelected ? Color.red : Color(white: 0.45))
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(
+                            isSelected
+                                ? Color.red.opacity(0.08)
+                                : Color.clear
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        .padding(.horizontal, 4)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.bottom, 20)
+            .padding(.top, 6)
+            .background(.ultraThinMaterial)
+            .background(Color.black.opacity(0.85))
+            .overlay(
+                Rectangle()
+                    .frame(height: 0.5)
+                    .foregroundStyle(Color.red.opacity(0.2)),
+                alignment: .top
+            )
         }
+        .ignoresSafeArea(edges: .bottom)
     }
 
     private var regularLayout: some View {
@@ -195,9 +238,9 @@ private extension AppSection {
 
     var systemImage: String {
         switch self {
-        case .home: return "house.fill"
+        case .home: return "gearshape.fill"
         case .files: return "folder.fill"
-        case .patches: return "shippingbox.fill"
+        case .patches: return "square.grid.2x2.fill"
         case .cleaner: return "sparkles"
         case .wallpapers: return "photo.on.rectangle.angled"
         }
@@ -210,6 +253,7 @@ private struct DashboardView: View {
     @StateObject private var license = LicenseService.shared
     @State private var showSettings = false
     @State private var showLogs = false
+    @State private var showLicenseKey = false
     @State private var showLogoutConfirm = false
     @Binding var cleanerEnabled: Bool
     @Binding var wallpapersEnabled: Bool
@@ -318,11 +362,26 @@ private struct DashboardView: View {
                 HStack {
                     Image(systemName: "key.fill")
                         .foregroundStyle(.red)
-                    Text(state.key)
-                        .font(.system(size: 13, weight: .medium, design: .monospaced))
-                        .foregroundStyle(.primary)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
+                    if showLicenseKey {
+                        Text(state.key)
+                            .font(.system(size: 13, weight: .medium, design: .monospaced))
+                            .foregroundStyle(.primary)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                    } else {
+                        Text("••••-••••-••••-••••")
+                            .font(.system(size: 13, weight: .medium, design: .monospaced))
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Button {
+                        showLicenseKey.toggle()
+                    } label: {
+                        Image(systemName: showLicenseKey ? "eye.slash" : "eye")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
                 }
                 .listRowBackground(Color(white: 0.07))
 
