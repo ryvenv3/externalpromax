@@ -115,18 +115,10 @@ struct InjectMenuView: View {
 
 // MARK: - Resolve container helper
 private func resolveContainer(bundleID: String) throws -> URL {
-    let fm = FileManager.default
-    let base = URL(fileURLWithPath: "/var/mobile/Containers/Data/Application")
-    let apps = try fm.contentsOfDirectory(at: base, includingPropertiesForKeys: nil)
-    for app in apps {
-        let meta = app.appendingPathComponent(".com.apple.mobile_container_manager.metadata.plist")
-        if let dict = NSDictionary(contentsOf: meta) as? [String: Any],
-           let id = dict["MCMMetadataIdentifier"] as? String,
-           id == bundleID {
-            return app
-        }
+    guard let path = ContainerStore.resolveAppContainerPath(bundleID: bundleID) else {
+        throw InjectError.containerNotFound(bundleID)
     }
-    throw InjectError.containerNotFound(bundleID)
+    return URL(fileURLWithPath: path, isDirectory: true)
 }
 
 // MARK: - Result & Error
