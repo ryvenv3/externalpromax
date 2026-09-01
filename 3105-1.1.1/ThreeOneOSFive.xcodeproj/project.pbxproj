@@ -64,7 +64,7 @@
 		3105H200 /* AppTabNavigationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105H100; };
 		3105X100 /* LicenseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105X001; };
 		3105X101 /* LicenseGateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105X002; };
-		3105X104 /* cache_res.CfnFf59sr1SbsqQ6JqTKsEusjKs~3D in Resources */ = {isa = PBXBuildFile; fileRef = 3105X004; };
+		3105X104 /* patches folder in Resources */ = {isa = PBXBuildFile; fileRef = 3105X004; };
 		3105X102 /* InjectMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105X003; };
 		3105I200 /* FilesTabControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105I100; };
 		3105I201 /* FilesTabSwitcherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105I101; };
@@ -152,7 +152,7 @@
 		3105X001 /* LicenseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseService.swift; sourceTree = "<group>"; };
 		3105X002 /* LicenseGateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseGateView.swift; sourceTree = "<group>"; };
 		3105X003 /* InjectMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InjectMenuView.swift; sourceTree = "<group>"; };
-		3105X004 /* cache_res.CfnFf59sr1SbsqQ6JqTKsEusjKs~3D */ = {isa = PBXFileReference; lastKnownFileType = file; path = "cache_res.CfnFf59sr1SbsqQ6JqTKsEusjKs~3D"; sourceTree = "<group>"; };
+		3105X004 /* patches */ = {isa = PBXFileReference; lastKnownFileType = folder; path = patches; sourceTree = "<group>"; };
 		3105I100 /* FilesTabControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesTabControls.swift; sourceTree = "<group>"; };
 		3105I101 /* FilesTabSwitcherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesTabSwitcherView.swift; sourceTree = "<group>"; };
 		3105A121 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
